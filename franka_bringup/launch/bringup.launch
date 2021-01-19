@@ -1,0 +1,39 @@
+<launch>
+
+
+    <arg name="tf_prefix" default="" />
+    <arg name="gazebo" default="true" />
+    
+    <!-- Launch Gazebo -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find franka_gazebo)/worlds/LAR_clusters.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="physics" value="ode" /> 
+    </include>
+
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find panda_description)/models/franka_arm_gripper.xacro' " />
+
+    <!-- Spawn the robot in gazebo -->
+    <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model panda" respawn="false"   output="screen">
+    </node>
+
+
+    <!-- Load controllers -->
+    <include file="$(find franka_gazebo)/launch/control.launch"/>
+
+    <!-- Start moveit node -->
+    <include file="$(find arm_control)/launch/moveit.launch"/>
+    
+    <!-- start rviz node to vizualize robot -->
+    <node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d '$(find arm_control)/rviz/panda.rviz'" />
+
+    <!-- start trajectory node -->
+    <!--<include file="$(find promp_uol/launch/planning.launch"/> -->
+        
+</launch>

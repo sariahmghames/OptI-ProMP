@@ -1,0 +1,63 @@
+<launch>
+   <arg name="debug" default="false" />
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+ 
+
+    <!-- Launch Gazebo -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find franka_gazebo)/worlds/riseholme.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="physics" value="ode" /> 
+    </include>
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find franka_description)/models/franka_arm_gripper.xacro' " />
+
+    <!-- Spawn the robot in gazebo -->
+    <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model panda" respawn="false"   output="screen">
+    </node>
+
+
+
+   <!-- MoveIt bringup -->
+   <include file="$(find franka_gazebo)/launch/moveit_planning_context.launch">
+     <arg name="load_robot_description" value="false"/>
+   </include>
+   <include file="$(find franka_gazebo)/launch/moveit_move_group.launch"/>
+   <include file="$(find franka_gazebo)/launch/moveit_rviz.launch"/>
+
+    
+    <!-- Start moveit node -->
+    <!-- Load the SRDF and other configuration files -->
+    <!--include file="$(find panda_moveit_config)/launch/planning_context_intProMP.launch"/-->
+
+    <!-- Run the main MoveIt executable -->
+    <!--include file="$(find panda_moveit_config)/launch/move_group_intProMP.launch">
+      <arg name="allow_trajectory_execution" value="true"/>
+      <arg name="debug" value="$(arg debug)"/>
+      <arg name="info" value="true"/>
+    </include>-->
+    
+
+  <!-- Load controllers -->
+  <include file="$(find franka_gazebo)/launch/control.launch"/>
+
+   <!-- start rviz node -->
+  <!--node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d '$(find franka_bringup)/rviz/panda_gazebo.rviz'" /-->
+  
+   
+  <!-- convert point cloud to rviz frame using tf -->
+  <!--  <node pkg="arm_control" name="kinect_tf_broadcaster" type="kinect_tf_broadcaster.py" output="screen"> -->
+        <!--param name="foo" value="foo" /-->
+   <!--</node> -->
+
+    <!-- start trajectory node -->
+    <!--<include file="$(find moveit_scripts)/doc/move_group_python_interface/launch/move_group_python_interface_promp.launch"/> -->
+        
+</launch>

@@ -1,0 +1,32 @@
+<launch>
+   <!-- This launch file will spawn 2 robots of same urdf and different args in gazebo -->
+   <arg name="debug" default="false" />
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+ 
+
+    <!-- Launch Gazebo -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find franka_gazebo)/worlds/riseholme.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="physics" value="ode" /> 
+    </include>
+
+
+    <param name="$(arg robot_description)" command="$(find xacro)/xacro '$(find franka_gazebo)/model/clusters/urdf/cluster2_extras.xacro'" />
+ 
+    <!-- BEGIN ROBOT 1-->
+    <arg name="robot_name"  value="cluster" />
+    <!-- Spawn urdf into Gazebo -->
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model $(arg robot_name)" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+
+ 
+
+   
+</launch>

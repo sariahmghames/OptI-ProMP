@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sdf version="1.4">
+	<world name="riseholme">
+		<scene>
+			<shadows>1</shadows>
+			
+		</scene>
+		
+		<model name="tray_p2_8">
+			<allow_auto_disable>1</allow_auto_disable>
+			<static>1</static>
+			<link name="link_0">
+				<collision name="collision">
+					<geometry>
+						<box>
+							<size>23.62 0.085 0.005</size>
+						</box>
+					</geometry>
+				</collision>
+				<visual name="visual">
+					<geometry>
+						<box>
+							<size>23.62 0.085 0.005</size>
+						</box>
+					</geometry>
+					<material>
+						<script>
+							<uri>file://media/materials/scripts/gazebo.material</uri>
+							<name>Gazebo/Grey</name>
+						</script>
+						<emissive>0 0 0 1</emissive>
+						<shader type="vertex">
+							<normal_map>__default__</normal_map>
+						</shader>
+						<specular>0.01 0.01 0.01 1</specular>
+						<lighting>1</lighting>
+						<ambient>0.7 0.7 0.7 1</ambient>
+						<diffuse>0.3 0.3 0.3 1</diffuse>
+					</material>
+					<cast_shadows>1</cast_shadows>
+				</visual>
+				<pose frame="">0 -1 1.19165 1.5707 0.0 0.0</pose>
+			</link>
+		</model>
+
+
+		<!--<model name="plate">
+			<allow_auto_disable>1</allow_auto_disable>
+			<static>1</static>
+			<link name="link_0">
+				<collision name="collision">
+					<geometry>
+						<box>
+							<size>0.4 0.2 0.3</size>
+						</box>
+					</geometry>
+				</collision>
+				<visual name="visual">
+					<geometry>
+						<box>
+							<size>0.4 0.2 0.3</size>
+						</box>
+					</geometry>
+					<material>
+						<script>
+							<uri>file://media/materials/scripts/gazebo.material</uri>
+							<name>Gazebo/Grey</name>
+						</script>
+						<emissive>0 0 0 1</emissive>
+						<shader type="vertex">
+							<normal_map>__default__</normal_map>
+						</shader>
+						<specular>0.01 0.01 0.01 1</specular>
+						<lighting>1</lighting>
+						<ambient>0.7 0.7 0.7 1</ambient>
+						<diffuse>0.3 0.3 0.3 1</diffuse>
+					</material>
+					<cast_shadows>1</cast_shadows>
+				</visual>
+				<pose frame="">0.0 -1.2 0.15 0.0 0.0 0.0</pose>
+			</link>
+		</model>-->
+
+
+		<include>
+      		<uri>model://clusters/extras/cluster7</uri>
+    	</include> 
+    	<include>
+      	<uri>model://clusters/extras/cluster8</uri>
+    	</include> 
+    	<include>
+      		<uri>model://clusters/extras/cluster11</uri>
+    	</include> 
+    	<include>
+      		<uri>model://clusters/cluster1</uri>
+    	</include>
+    	<include>
+      		<uri>model://clusters/cluster2</uri>
+    	</include>
+    	<include>
+      		<uri>model://clusters/cluster3</uri>
+    	</include>
+    	<include>
+      		<uri>model://clusters/cluster4</uri>
+    	</include>
+		<!--include>
+		  <uri>model://turtlebot</uri>
+		  <static>0</static>
+		  <pose> -5 -5 0 0 0 0</pose>
+		</include>-->
+		<!--include>
+			<uri>model://sun</uri>
+		</include>
+		<include>
+			<uri>model://grass_ground_plane</uri>
+		</include-->
+		<physics type="ode">
+			<real_time_update_rate>100</real_time_update_rate>
+			<real_time_factor>0.5</real_time_factor>
+			<max_step_size>0.005</max_step_size>
+			<gravity>0 0 -9.8</gravity>
+		</physics>
+	</world>
+</sdf>
