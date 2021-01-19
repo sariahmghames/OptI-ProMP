@@ -1,0 +1,332 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="straw_cluster3">
+
+<xacro:arg name="tf_prefix" default=""/>
+
+<link name="world"/>
+
+<!-- Robot7 -->
+<link name="$(arg tf_prefix)/yball_stem7">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />  <!-- can't be smaller -->
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/yball_stem7">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+
+<joint name="$(arg tf_prefix)/stem7y" type="revolute" >
+  <parent link="world" />
+  <child link="$(arg tf_prefix)/yball_stem7" />
+  <origin xyz="9.85 2.5 1.44" rpy="0 0 0"/> <!-- <origin xyz="-0.15 0.06 1.19" rpy="0 0 0"/> in case of reference /base_link -->
+  <axis xyz="0 1 0" />
+  <dynamics damping="0.0001" friction="0.0002"/>
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" /> 
+</joint>
+
+<!-- <transmission name="tran_stem7y">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem7y"> 
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint> 
+  <actuator name="$(arg tf_prefix)/act_stem7y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator> 
+</transmission> -->
+
+
+<link name="$(arg tf_prefix)/xball_stem7">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/> <!-- .00001-->
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/xball_stem7">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/stem7x" type="revolute" >
+  <parent link="$(arg tf_prefix)/yball_stem7"/>
+  <child link="$(arg tf_prefix)/xball_stem7"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/> 
+  <axis xyz="1 0 0" />
+  <dynamics damping="0.0001" friction="0.0002" />
+  <limit 
+      lower="-${pi}" upper="${pi}" 
+      effort="1" velocity="0.1" /> 
+</joint> 
+<!-- <transmission name="tran_stem7x">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem7x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem7x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<!-- Define stem of straw7 -->
+<link name="$(arg tf_prefix)/stem7">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.001"/>
+    <inertia
+      ixx="0.0000000005" ixy="0.0" ixz="0.0"
+      iyy="0.0000000005" iyz="0.0" 
+      izz="0.0000000005"/>
+  </inertial>
+  <collision>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </collision>
+  <visual>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/stem7">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" />   
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/xball_stem7" type="fixed">
+  <parent link="$(arg tf_prefix)/xball_stem7"/>
+  <child link="$(arg tf_prefix)/stem7"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>  
+</joint>
+
+
+
+
+<!-- Define straw4 -->
+<link name="$(arg tf_prefix)/straw7">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/> <!-- 0.002-->
+    <inertia
+      ixx="0.00000018" ixy="0.0" ixz="0.0"
+      iyy="0.00000018" iyz="0.0" 
+      izz="0.00000018"/>
+  </inertial>
+  <collision>
+    <geometry>
+      <sphere radius="0.015"/>
+    </geometry>
+  </collision>
+  <visual>
+    <geometry>
+		<sphere radius="0.015"/>
+    </geometry>
+    <material name="Red">
+      <color rgba="1 0 0 1"/>
+    </material>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/straw7">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Red</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/straw7_stem7" type="fixed"> 
+  <parent link="$(arg tf_prefix)/stem7"/>
+  <child link="$(arg tf_prefix)/straw7"/>
+  <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+</joint> 
+
+
+<!-- Robot2 -->
+<link name="$(arg tf_prefix)/yball_stem8">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/yball_stem8">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+
+<joint name="$(arg tf_prefix)/stem8y" type="revolute" >
+  <parent link="world" />
+  <child link="$(arg tf_prefix)/yball_stem8" />
+  <origin xyz="9.88 2.5 1.41" rpy="0 0 0"/> <!-- -0.12 0.5 1.16 for /base_link as reference-->
+  <axis xyz="0 1 0" />
+  <dynamics damping="0.0001" friction="0.0002"/>
+  <limit 
+      lower="-${pi}" upper="${pi}" 
+      effort="1" velocity="0.1" /> 
+</joint>
+
+<link name="$(arg tf_prefix)/xball_stem8">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/xball_stem8">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/stem8x" type="revolute" >
+  <parent link="$(arg tf_prefix)/yball_stem8"/>
+  <child link="$(arg tf_prefix)/xball_stem8"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/> 
+  <axis xyz="1 0 0" />
+  <dynamics damping="0.0001" friction="0.0002" />
+  <limit 
+      lower="-${pi}" upper="${pi}" 
+      effort="1" velocity="0.1" /> 
+</joint>
+
+
+<!-- Define stem of straw8 -->
+<link name="$(arg tf_prefix)/stem8">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.001"/>
+    <inertia
+      ixx="0.0000000005" ixy="0.0" ixz="0.0"
+      iyy="0.0000000005" iyz="0.0" 
+      izz="0.0000000005"/>
+  </inertial>
+  <collision>
+    <geometry>
+		  <cylinder length="0.1" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </collision>
+  <visual>
+    <geometry>
+		<cylinder length="0.15" radius="0.002"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/stem8">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <kp  value="1" />
+  <kd  value="0.1" />  
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/xball_stem8" type="fixed">
+  <parent link="$(arg tf_prefix)/xball_stem8"/>
+  <child link="$(arg tf_prefix)/stem8"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>  
+</joint>
+
+
+
+<!-- Define straw5 -->
+<link name="$(arg tf_prefix)/straw8">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/>
+    <inertia
+      ixx="0.00000018" ixy="0.0" ixz="0.0"
+      iyy="0.00000018" iyz="0.0" 
+      izz="0.00000018"/>
+  </inertial>
+  <collision>
+    <geometry>
+    <sphere radius="0.015"/>
+    </geometry>
+  </collision>
+  <visual>
+    <geometry>
+		<sphere radius="0.015"/>
+    </geometry>
+    <material name="Red">
+      <color rgba="1 0 0 1"/>
+    </material>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/straw8">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Red</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/straw8_stem8" type="fixed"> 
+  <parent link="$(arg tf_prefix)/stem8"/>
+  <child link="$(arg tf_prefix)/straw8"/>
+  <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+</joint> 
+
+
+</robot>
+

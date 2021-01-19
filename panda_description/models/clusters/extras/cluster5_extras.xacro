@@ -1,0 +1,595 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="straw_cluster5">
+
+<xacro:arg name="tf_prefix" default=""/>
+
+<link name="world"/>
+
+<!-- Robot1 -->
+<link name="$(arg tf_prefix)/yball_stem13">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/yball_stem13">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+
+<joint name="$(arg tf_prefix)/stem13y" type="revolute" >
+  <parent link="world" />
+  <child link="$(arg tf_prefix)/yball_stem13" />
+  <origin xyz="10.15 2.42 1.16" rpy="0 0 0"/> 
+  <axis xyz="0 1 0" />
+  <dynamics damping="0.0001" friction="0.0002"/>
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem13y">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem13y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem13y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<link name="$(arg tf_prefix)/xball_stem13">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/xball_stem13">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/stem13x" type="revolute" >
+  <parent link="$(arg tf_prefix)/yball_stem13"/>
+  <child link="$(arg tf_prefix)/xball_stem13"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/> 
+  <axis xyz="1 0 0" />
+  <dynamics damping="0.0001" friction="0.0002" />
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem13x">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem13x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem13x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<!-- Define stem of straw13 -->
+<link name="$(arg tf_prefix)/stem13">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.001"/>
+    <inertia
+      ixx="0.0000000005" ixy="0.0" ixz="0.0"
+      iyy="0.0000000005" iyz="0.0" 
+      izz="0.0000000005"/>
+  </inertial>
+  <collision>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </collision>
+  <visual>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/stem13">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/xball_stem13" type="fixed">
+  <parent link="$(arg tf_prefix)/xball_stem13"/>
+  <child link="$(arg tf_prefix)/stem13"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>  
+</joint>
+
+<!-- <joint name="$(arg tf_prefix)/tabletop28_stem13" type="revolute">
+  <parent link="/base_link"/>
+  <child link="$(arg tf_prefix)/stem13"/>
+  <origin xyz="0.15 -0.14 1.16" rpy="0 0 0"/>  
+  <axis xyz="0 1 0" />
+  <dynamics damping="10" friction="200" />
+  <limit 
+      lower="-${pi/2}" upper="${pi/2}"
+      effort="10" velocity="0.1" />
+</joint> 
+<transmission name="tran_stem13">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/tabletop28_stem13">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem13y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>  -->
+
+
+
+<!-- Define straw4 -->
+<link name="$(arg tf_prefix)/straw13">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/>
+    <inertia
+      ixx="0.00000018" ixy="0.0" ixz="0.0"
+      iyy="0.00000018" iyz="0.0" 
+      izz="0.00000018"/>
+  </inertial>
+  <collision>
+    <geometry>
+    <sphere radius="0.015"/>
+    </geometry>
+  </collision>
+  <visual>
+    <geometry>
+		<sphere radius="0.015"/>
+    </geometry>
+    <material name="Red">
+      <color rgba="1 0 0 1"/>
+    </material>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/straw13">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Red</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/straw13_stem13" type="fixed"> 
+  <parent link="$(arg tf_prefix)/stem13"/>
+  <child link="$(arg tf_prefix)/straw13"/>
+  <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+</joint> 
+
+
+<!-- Robot2 -->
+<link name="$(arg tf_prefix)/yball_stem14">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/yball_stem14">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+
+<joint name="$(arg tf_prefix)/stem14y" type="revolute" >
+  <parent link="world" />
+  <child link="$(arg tf_prefix)/yball_stem14" />
+  <origin xyz="10.15 2.42 1.19" rpy="0 -${pi/40} 0"/> <!-- 0 -${pi/40} 0 -->
+  <axis xyz="0 1 0" />
+  <dynamics damping="0.0001" friction="0.0002"/>
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem14y">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem14y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem14y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<link name="$(arg tf_prefix)/xball_stem14">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/xball_stem14">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/stem14x" type="revolute" >
+  <parent link="$(arg tf_prefix)/yball_stem14"/>
+  <child link="$(arg tf_prefix)/xball_stem14"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/> 
+  <axis xyz="1 0 0" />
+  <dynamics damping="0.0001" friction="0.0002" />
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem14x">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem14x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem14x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+<!-- Define stem of straw14 -->
+<link name="$(arg tf_prefix)/stem14">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.001"/>
+    <inertia
+      ixx="0.0000000005" ixy="0.0" ixz="0.0"
+      iyy="0.0000000005" iyz="0.0" 
+      izz="0.0000000005"/>
+  </inertial>
+  <collision>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </collision>
+  <visual>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/stem14">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/xball_stem14" type="fixed">
+  <parent link="$(arg tf_prefix)/xball_stem14"/>
+  <child link="$(arg tf_prefix)/stem14"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>  
+</joint>
+
+<!-- <joint name="$(arg tf_prefix)/tabletop28_stem14" type="revolute">
+  <parent link="/base_link"/>
+  <child link="$(arg tf_prefix)/stem14"/>
+  <origin xyz="0.15 -0.14 1.19" rpy="0 -${pi/40} 0"/>  
+  <axis xyz="0 1 0" />
+  <dynamics damping="10" friction="200" />
+  <limit 
+      lower="-${pi/2}" upper="${pi/2}"
+      effort="10" velocity="0.1" />
+</joint> 
+<transmission name="tran_stem15">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/tabletop28_stem14">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem14y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>  -->
+
+
+<!-- Define straw14 -->
+<link name="$(arg tf_prefix)/straw14">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/>
+    <inertia
+      ixx="0.00000018" ixy="0.0" ixz="0.0"
+      iyy="0.00000018" iyz="0.0" 
+      izz="0.00000018"/>
+  </inertial>
+  <collision>
+    <geometry>
+    <sphere radius="0.015"/>
+    </geometry>
+  </collision>
+  <visual>
+    <geometry>
+		<sphere radius="0.015"/>
+    </geometry>
+    <material name="Red">
+      <color rgba="1 0 0 1"/>
+    </material>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/straw14">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Red</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/straw14_stem14" type="fixed"> 
+  <parent link="$(arg tf_prefix)/stem14"/>
+  <child link="$(arg tf_prefix)/straw14"/>
+  <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+</joint> 
+
+
+
+<!-- Robot3 -->
+<link name="$(arg tf_prefix)/yball_stem15">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/yball_stem15">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+
+<joint name="$(arg tf_prefix)/stem15y" type="revolute" >
+  <parent link="world" />
+  <child link="$(arg tf_prefix)/yball_stem15" />
+  <origin xyz="10.15 2.42 1.19" rpy="0 ${pi/40} 0"/> <!-- 0 ${pi/40} 0-->
+  <axis xyz="0 1 0" />
+  <dynamics damping="0.0001" friction="0.0002"/>
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem15y">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem15y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem15y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<link name="$(arg tf_prefix)/xball_stem15">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value=".00001"/>
+    <inertia ixx="0.0000004" ixy="0.0" ixz="0.0" iyy="0.0000004" iyz="0.0" izz="0.0000004" />
+  </inertial>
+  <visual><geometry><sphere radius=".00001"/></geometry></visual>
+  <collision><geometry><sphere radius=".00001"/></geometry></collision>
+</link>
+<gazebo reference="$(arg tf_prefix)/xball_stem15">
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/stem15x" type="revolute" >
+  <parent link="$(arg tf_prefix)/yball_stem15"/>
+  <child link="$(arg tf_prefix)/xball_stem15"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/> 
+  <axis xyz="1 0 0" />
+  <dynamics damping="0.0001" friction="0.0002" />
+  <limit 
+      lower="-${pi}" upper="${pi}"
+      effort="1" velocity="0.1" />
+</joint>
+<!--<transmission name="tran_stem15x">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/stem15x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem15x">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission> -->
+
+
+<!-- Define stem of straw15 -->
+<link name="$(arg tf_prefix)/stem15">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/>
+    <inertia
+      ixx="0.0000000005" ixy="0.0" ixz="0.0"
+      iyy="0.0000000005" iyz="0.0" 
+      izz="0.0000000005"/>
+  </inertial>
+  <collision>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </collision>
+  <visual>
+    <geometry>
+		<cylinder length="0.15" radius="0.003"/>
+    </geometry>
+    <material name="green">
+      <color rgba="0 ${128/255} 0 1"/>
+    </material>
+    <origin xyz="0 0 -0.075" rpy="0 0 0"/>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/stem15">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Green</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/xball_stem15" type="fixed">
+  <parent link="$(arg tf_prefix)/xball_stem15"/>
+  <child link="$(arg tf_prefix)/stem15"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>  
+</joint>
+
+<!-- <joint name="$(arg tf_prefix)/tabletop28_stem15" type="revolute">
+  <parent link="/base_link"/>
+  <child link="$(arg tf_prefix)/stem15"/>
+  <origin xyz="0.15 -0.14 1.19" rpy="0 ${pi/40} 0"/>  
+  <axis xyz="0 1 0" />
+  <dynamics damping="10" friction="200" />
+  <limit 
+      lower="-${pi/2}" upper="${pi/2}"
+      effort="10" velocity="0.1" />
+</joint> 
+<transmission name="tran_stem15">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="$(arg tf_prefix)/tabletop28_stem15">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="$(arg tf_prefix)/act_stem15y">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>  -->
+
+
+<!-- Define straw15 -->
+<link name="$(arg tf_prefix)/straw15">
+  <gravity>1</gravity>
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.002"/>
+    <inertia
+      ixx="0.00000018" ixy="0.0" ixz="0.0"
+      iyy="0.00000018" iyz="0.0" 
+      izz="0.00000018"/>
+  </inertial>
+  <collision>
+    <geometry>
+    <sphere radius="0.015"/>
+    </geometry>
+  </collision>
+  <visual>
+    <geometry>
+		<sphere radius="0.015"/>
+    </geometry>
+    <material name="Red">
+      <color rgba="1 0 0 1"/>
+    </material>
+  </visual>
+</link>
+<gazebo reference="$(arg tf_prefix)/straw15">
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <selfCollide>true</selfCollide>
+  <maxContacts>2</maxContacts>
+  <minDepth>0</minDepth>
+  <maxVel>0.01</maxVel>
+  <kp  value="1" />
+  <kd  value="0.1" /> 
+  <material>Gazebo/Red</material>
+</gazebo>
+
+
+<joint name="$(arg tf_prefix)/straw15_stem15" type="fixed"> 
+  <parent link="$(arg tf_prefix)/stem15"/>
+  <child link="$(arg tf_prefix)/straw15"/>
+  <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+</joint> 
+
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">  
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <legacyModeNS>true</legacyModeNS>
+    <robotNamespace>/straw_cluster5</robotNamespace>
+  </plugin>
+</gazebo> 
+
+
+
+</robot>
+

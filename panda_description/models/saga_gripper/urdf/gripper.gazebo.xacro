@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix parent_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+    
+    <gazebo>
+      <plugin name="${name_prefix}mimic_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+        <joint>${parent_joint}</joint>
+        <mimicJoint>${mimic_joint}</mimicJoint>
+        <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->
+          <hasPID />
+        </xacro:if>
+        <multiplier>${multiplier}</multiplier>
+        <offset>${offset}</offset>
+        <sensitiveness>${sensitiveness}</sensitiveness>   <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
+        <maxEffort>${max_effort}</maxEffort>              <!-- only taken into account if has_pid:=true [Nm] -->
+        <xacro:unless value="${robot_namespace == ''}">
+          <robotNamespace>($robot_namespace)</robotNamespace>
+        </xacro:unless>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+  <gazebo reference="gripper_housing">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="cutting_finger">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="inner_finger_1">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="inner_finger_2">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="outer_finger_1">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="inner_finger_2">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="inner_finger_3">
+    <material>Gazebo/White</material>
+  </gazebo>
+  <gazebo reference="cutter_right">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="cutter_left">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="punnet_clamp">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="inner_finger_1_joint"
+    parent_joint="cutting_finger_joint" mimic_joint="inner_finger_1_joint"
+    has_pid="false" multiplier="1.0" />
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="inner_finger_2_joint"
+    parent_joint="cutting_finger_joint" mimic_joint="inner_finger_2_joint"
+    has_pid="false" multiplier="1.0" />
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="outer_finger_1_joint"
+    parent_joint="cutting_finger_joint" mimic_joint="outer_finger_1_joint"
+    has_pid="false" multiplier="1.0" />
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="outer_finger_2_joint"
+    parent_joint="cutting_finger_joint" mimic_joint="outer_finger_2_joint"
+    has_pid="false" multiplier="1.0" />
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="outer_finger_3_joint"
+    parent_joint="cutting_finger_joint" mimic_joint="outer_finger_3_joint"
+    has_pid="false" multiplier="1.0" />
+
+  <xacro:mimic_joint_plugin_gazebo name_prefix="left_cutter_joint"
+    parent_joint="right_cutter_joint" mimic_joint="left_cutter_joint"
+    has_pid="false" multiplier="-1.0" />
+
+  <transmission name="finger_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cutting_finger_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="finger_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="cutter_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="cutter_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="cutter_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="clamp_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="punnet_clamp_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="clamp_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+</robot>

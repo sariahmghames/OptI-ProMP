@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda_arm_plus_own_gripper">
+
+  <xacro:arg name="x_init" default="-0.25" /> 
+  <xacro:arg name="y_init" default="-1" /> 
+  <xacro:arg name="z_init" default="0.0" /> 
+
+  <xacro:include filename="$(find panda_description)/models/panda_arm/panda_arm_gazebo.xacro" />
+  <!--xacro:panda_arm arm_id="panda_arm" xyz="9.5 -2 0" rpy="0 0 ${-pi/2}" model_extras="false"/-->
+  <xacro:panda_arm arm_id="panda_arm" xyz="$(arg x_init) $(arg y_init) $(arg z_init)" rpy="0 0 ${-pi/2}" model_extras="false"/>
+
+  
+  <!-- add gripper -->
+
+
+  <!--xacro:include filename="$(find panda_description)/models/saga_gripper/urdf/gripper.macro.xacro" />
+    <xacro:endeffector_strawberry_gripper
+      parent_link="panda_arm_link8"
+      output_sim="true">
+      <origin xyz="0 0.0 0.0" rpy="0 0 0"  />
+    </xacro:endeffector_strawberry_gripper-->
+  
+
+
+  <xacro:include filename="$(find panda_description)/models/panda_gripper/panda_gripper_gazebo.xacro"/>
+  <xacro:panda_gripper ns="gripper" rpy="0 0 0" connected_to="panda_arm_link8" />
+
+  <!-- Define Camera -->
+  <!--xacro:camera_3d_framos_d435e_sensor
+    robot_name="$(arg robot_name)"
+    tf_prefix="$(arg tf_prefix)"
+    output_sim="$(arg gazebo)" 
+    parent_link="${arm_index}_base" 
+    topic_prefix="d435e_camera_${arm_index}"
+    suffix="${arm_index}" >
+    <origin xyz="0.1 0 0.7" rpy="0.0 ${radians(45)} ${radians(-90)}" />
+  </xacro:camera_3d_framos_d435e_sensor-->
+
+
+   <!-- Import macro for realsense- camera-->
+  <xacro:include filename="$(find panda_description)/models/realsense/realsense2_description/urdf/_d435.urdf.xacro"/>
+    <!-- Create camera instance -->
+  <xacro:sensor_d435 name="camera" topics_ns="camera" parent="world" >
+    <origin xyz="$(arg x_init) -0.5 1" rpy="0 0 ${-pi/2}" />
+  </xacro:sensor_d435>
+    <!-- Place camera referenced to world frame--> 
+
+
+     <!-- Joints Control in Gazebo -->
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+    
+  
+</robot>
