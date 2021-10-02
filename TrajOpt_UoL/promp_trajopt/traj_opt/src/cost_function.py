@@ -13,7 +13,7 @@ class CostFunction(object):
     def __init__(self):
         super(CostFunction, self).__init__()
         #moveit_commander.roscpp_initialize(sys.argv)
-        self.collision_threshold = 0.07
+        self.collision_threshold = 0.02 # was 0.01 for one framework for  push + obs+ smooth,  0.01 for seq opt
         self.dsafe_agri = 0.0
         #self.robot_state = moveit_commander.RobotCommander()
         #self.scene = moveit_commander.PlanningSceneInterface()
@@ -67,7 +67,7 @@ class CostFunction(object):
             joint_values = list(self.robot_state.get_current_state().joint_state.position)[:7]
 
         _, t_joints = self.franka_k.fwd_kin(joint_values) # t_joints is transformation matrix up to eac joint
-        fwd_k_j_positions = np.vstack(([0.,0.,0.], t_joints[:len(t_joints)-1, :3, 3])) # it stacks the translation vector of each trasnformation matrix
+        fwd_k_j_positions = np.vstack(([0.,0.,0.], t_joints[:len(t_joints)-1, :3, 3])) # it stacks the translation vector of each trasnformation matrix, # or [:len(t_joints)-2, :3, 3]
         discretised = list()
         j_index = list()
         for j in range(len(fwd_k_j_positions) - 1):
@@ -115,7 +115,7 @@ class CostFunction(object):
             for o in object_list_push:
                 ro = r - o
                 norm_ro = np.linalg.norm(ro)
-                dist.append(norm_ro - 0.02) # 0.03 for radius of sphere enclosing the points in cluster
+                dist.append(norm_ro - 0.01) # 0.03 for radius of sphere enclosing the points in cluster
             D.append(np.min(np.array(dist)))
         return D
 

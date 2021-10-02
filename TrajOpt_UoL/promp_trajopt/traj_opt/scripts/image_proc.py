@@ -20,6 +20,8 @@ image_list = [] # image rgb
 image_rgb = [] # pixels rgb
 loop1 = 0
 loop2 = 0
+min_rect_dim =6
+max_rect_dim = 15
 
 
 ##############################################################################################################################################################################
@@ -81,6 +83,9 @@ for filename in glob.glob('/home/sariah/intProMP_franka/src/TrajOpt_UoL/promp_tr
 for filename in glob.glob('/home/sariah/intProMP_franka/src/TrajOpt_UoL/promp_trajopt/clusters/rgb/*.jpg'):
 	#image = loadRGB(filename)
 	image_bgr = cv2.imread(filename) 
+	image_bgr_copy = np.copy(image_bgr)
+	image_bgr_copy2 = np.copy(image_bgr)
+	image_bgr_copy3 = np.copy(image_bgr)
 	image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 	cv2.imshow('RGB image 1', image_bgr)
 	image_list[loop1].show()
@@ -128,10 +133,13 @@ for filename in glob.glob('/home/sariah/intProMP_franka/src/TrajOpt_UoL/promp_tr
 	#kernel1 = np.ones((1,1),np.uint8)
 	kernel2 = np.ones((2,2),np.uint8)
 	kernel3 = np.ones((5,5),np.uint8) # to reconstruct straw crossed by stem
+	kernel4 = np.ones((9,9),np.uint8)
 	#erosion = cv2.erode(mask1,kernel1,iterations = 1)
-	dilation = cv2.dilate(mask1,kernel2,iterations = 1)
+	dilation_old = cv2.dilate(mask1,kernel2,iterations = 1) 
+	dilation = cv2.dilate(mask1,kernel4,iterations = 1) # but dilation fill the space with real pixels color, try to look into how to fill with same pixels color as surrounding
 
 	mask2= cv2.inRange(lab, adj_lower_Dgreen, adj_upper_Dgreen)
+	dilation2 = cv2.dilate(mask2,kernel4,iterations = 1)
 	mask3= cv2.inRange(lab, adj_lower_Lgreen, adj_upper_Lgreen)
 	#erosion3 = cv2.erode(mask3,kernel2,iterations = 1)
 	dilation3 = cv2.dilate(mask3,kernel2,iterations = 1)
@@ -139,15 +147,76 @@ for filename in glob.glob('/home/sariah/intProMP_franka/src/TrajOpt_UoL/promp_tr
 	mask = cv2.bitwise_or(mask_pre, dilation3)
 	print('mask shape=', mask1.shape)
 	res= cv2.bitwise_and(image_bgr, image_bgr, mask=mask)
+	res_LG= cv2.bitwise_and(image_bgr, image_bgr, mask=dilation3)
+	res_DG= cv2.bitwise_and(image_bgr, image_bgr, mask=mask2)
+	res_R= cv2.bitwise_and(image_bgr, image_bgr, mask=dilation)
 
 	#cv2.imshow('Original image', image)
 	#cv2.imshow('mask1_'+str(loop1)+'.jpg',dilation)
-	#cv2.imshow('mask2_'+str(loop1)+'.jpg',mask2)
+	cv2.imshow('mask2_'+str(loop1)+'.jpg',mask2)
 	#cv2.imshow('mask_'+str(loop1)+'.jpg',mask)
 	cv2.imshow('res_'+str(loop1)+'.jpg',res)
+	cv2.imshow('res_LG'+str(loop1)+'.jpg',res_LG)
+	cv2.imshow('res_DG'+str(loop1)+'.jpg',res_DG)
+	cv2.imshow('res_R'+str(loop1)+'.jpg',res_R)
+
+	# Model Fitting LG
+	lines = cv2.HoughLinesP(dilation3,1,np.pi/180,20, maxLineGap=40)  # 2nd and 3rd arg are rho and theta params accuracies, 4th arg is threshold, represents min length of line to be considered as line (in terms of nb of pixels)
+	for line in lines:
+		x1, y1, x2, y2 = line[0]
+		cv2.line(image_bgr_copy,(x1,y1),(x2,y2),(0,255,0),2) # start pt, end point, color, thickness
+		cv2.imwrite('stem_clusters'+str(loop1)+'.jpg', image_bgr_copy)
+
+	cv2.imshow("model_fitting_LG", image_bgr_copy)
+
+
+	# Model Fitting DG
+	ret,thresh = cv2.threshold(dilation2,127,255,cv2.THRESH_BINARY)
+	#cv2.imshow('threshold',thresh)
+	contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE) # cv2.CHAIN_APPROX_NONE (734 points) and second image shows the one with cv2.CHAIN_APPROX_SIMPLE (only 4 points). See, how much memory it saves!!!
+	for cnt in contours:
+		#cnt=contours[0]
+		x,y,w,h = cv2.boundingRect(cnt)
+		if w > 20 and h > 10 and w < 180 and h < 140:
+			stem_rect = cv2.rectangle(image_bgr_copy2,(x,y),(x+w,y+h),(0,0,255),2)
+			cv2.imwrite('lid_clusters'+str(loop1)+'.jpg', image_bgr_copy2)
+		
+	cv2.imshow("model_fitting_DG",image_bgr_copy2)
+
+
+
+	# Model Fitting DG
+	ret_R,thresh_R = cv2.threshold(dilation,127,255,cv2.THRESH_BINARY)
+	#cv2.imshow('threshold',thresh)
+	contours_R, hierarchy_R = cv2.findContours(thresh_R,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE) # cv2.CHAIN_APPROX_NONE (734 points) and second image shows the one with cv2.CHAIN_APPROX_SIMPLE (only 4 points). See, how much memory it saves!!!
+	if len(contours_R)>0 :
+		for cnt_R in contours_R:
+		# get the min area rect
+			rect = cv2.minAreaRect(cnt_R)
+			box = cv2.boxPoints(rect)
+			# convert all coordinates floating point values to int
+			box = np.int0(box)
+			# draw a blue rectangle
+			#cv2.drawContours(image_bgr_copy3, [box], 2, (255, 0, 0))
+
+			# finally, get the min enclosing circle
+			# Model Fitting Red
+			(x, y), radius = cv2.minEnclosingCircle(cnt_R)
+			# convert all values to int
+			center = (int(x), int(y))
+			radius = int(radius)
+			if (radius > 10 and radius < 200):
+				# and draw the circle in red
+				straw_circles = cv2.circle(image_bgr_copy3, center, radius, (0, 0, 255), 2)
+				cv2.imwrite('straw_clusters'+str(loop1)+'.jpg', image_bgr_copy3)
+
+
+		cv2.imshow("model_fitting_R",image_bgr_copy3)
+
+
 	cv2.waitKey(0)
 
-cv2.destroyAllWindows()
+	cv2.destroyAllWindows()
 
 	#loop1 = loop1 +1
 

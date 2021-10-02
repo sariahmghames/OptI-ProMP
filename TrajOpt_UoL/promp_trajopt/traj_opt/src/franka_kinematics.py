@@ -9,7 +9,7 @@ class FrankaKinematics():
 
     def __init__(self, ):
         self.a = np.array([0, 0, 0, 0.0825, -0.0825, 0, 0.088, 0])
-        self.d = np.array([0.333, 0, 0.316, 0, 0.384, 0, 0, 0.107])
+        self.d = np.array([0.333, 0, 0.316, 0, 0.384, 0, 0, 0.107+0.11]) # 0.107+0.11]
         self.alpha = np.array( [0, -np.pi / 2, np.pi / 2, np.pi / 2, -np.pi / 2, np.pi / 2, np.pi / 2, 0] )
         self.numJoints = len(self.a) - 1
         self.T_desired = []
@@ -34,6 +34,7 @@ class FrankaKinematics():
             T = tf_tran.concatenate_matrices( T, ac )
             T_joint[i, :, :] = T  # gives the transformation of each joint wrt base CS
         return T, T_joint # T will be the T_0_ee and T_joint will contain T01, T02, T03 ... T0_ee
+
 
     def fwd_kin_trajectory(self, joint_trajectory):
         endEffTrajectory = np.zeros( (joint_trajectory.shape[0], 7) )
@@ -242,7 +243,7 @@ class FrankaKinematics():
             scale = 0.4
             ax.set_xlim( -1 * scale, 1 * scale )
             ax.set_ylim( -1 * scale, 1 * scale )
-            ax.set_zlim( 0, 1 )
+            ax.set_zlim( 0, 1.5 )
 
 
 if __name__ == '__main__':

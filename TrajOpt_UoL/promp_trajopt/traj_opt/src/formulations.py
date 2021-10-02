@@ -2,10 +2,6 @@ import numpy as np
 import math
 import time, random
 import matplotlib.pyplot as plt
-from itertools import product, combinations
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-
 #from mathutils.geometry import intersect_point_line
 
 def perpendicular(v):
@@ -114,8 +110,8 @@ def plot_3dseg(point, angle, length):
 
     # find the end point
     endz = length * np.cos(Pangle) + z 
-    endx = length * np.sin(Pangle) + x
-    endy = length * np.sin(Yangle) + y
+    endy = length * np.sin(Pangle) + y # it was x when runnin opt without bounds script, and clusters r8 and left were at 0.1m in fromt of robot and not 0.49 in front (so x and y of goal wrt robot are inverted )
+    endx = length * np.sin(Yangle) + x # it was y when runnin opt without bounds script,
 
     ## plot the points
     #fig = plt.figure()
@@ -162,59 +158,11 @@ def plot_sphere(center, radius):
     #print('Duration: %f' % (100 / (time.time() - tstart)))
 
 
-def plot_cube():
-    r = [-1, 1]
-    for s, e in combinations(np.array(list(product(r, r, r))), 2):
-        if np.sum(np.abs(s-e)) == r[1]-r[0]:
-            ax.plot3D(*zip(s, e), color="b")
-
-
-def plot_poly():
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    x = [0,1,1,0]
-    y = [0,0,1,1]
-    z = [0,1,0,1]
-    verts = [list(zip(x,y,z))]
-    ax.add_collection3d(Poly3DCollection(verts))
-    plt.show()
-
-
-def plot_3dbar(t=2, l=100, bins=1, x_center= 0.25, y_center = 0.25, xobs=0.2, elev_factor=0.2):
-    #fig = plt.figure()
-    #ax = fig.add_subplot(111, projection='3d')
-    x, y = np.random.rand(t, l) * 1
-    y = y -0.1
-    x = x -0.08
-    hist, xedges, yedges = np.histogram2d(x, y, bins)
-
-    elements = (len(xedges) - 1) * (len(yedges) - 1)
-    xpos, ypos = np.meshgrid(xedges[:-1]+y_center, yedges[:-1]+x_center)
-
-    xpos = xpos.flatten()
-    ypos = ypos.flatten()
-    zpos = np.ones(elements) * elev_factor - xobs 
-    dx = elev_factor * np.ones_like(zpos)
-    dy = dx.copy()
-    dz = hist.flatten() 
-    return xpos, ypos, zpos, dx, dy, dz
-
-    #ax.bar3d(xpos[:8], ypos[:8], zpos[:8], dx, dy, dz, color='b', zsort='average')
-    #blue_proxy = plt.Rectangle((0, 0), 1, 1, fc="b")
-    #ax.bar3d(xpos[8:], ypos[8:], zpos[8:], dx, dy, dz, color='r', zsort='average')
-    #red_proxy = plt.Rectangle((0, 0), 1, 1, fc="r")
-    #ax.legend([blue_proxy,red_proxy],['cars','bikes'])
-
-    #plt.show()
-
-
-
 class Point: 
     def __init__(self, x, y): 
         self.x = x 
         self.y = y 
   
-
 # Given three colinear points p, q, r, the function checks if  
 # point q lies on line segment 'pr'  
 def onSegment(p, q, r): 
@@ -222,9 +170,7 @@ def onSegment(p, q, r):
            (q.y <= max(p.y, r.y)) and (q.y >= min(p.y, r.y))): 
         return True
     return False
- 
-
-
+  
 def orientation(p, q, r): 
     # to find the orientation of an ordered triplet (p,q,r) 
     # function returns the following values: 
@@ -286,6 +232,8 @@ def doIntersect(p1,q1,p2,q2):
     # If none of the cases 
     return False
   
+
+
 # Driver program to test above functions: 
 p1 = Point(1, 1) 
 q1 = Point(10, 1) 
